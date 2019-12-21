@@ -1,10 +1,10 @@
 const assert = require('assert');
-const shuffle = require('lodash/shuffle');
 const range = require('lodash/range');
 const sampleSize = require('lodash/sampleSize');
 const chunk = require('lodash/chunk');
 const reverse = require('lodash/reverse');
 const without = require('lodash/without');
+const shuffle = require('lodash/shuffle');
 
 const data = [
 	{
@@ -820,9 +820,19 @@ console.log('sample : ', sample)
 const chunkedGroups = chunk(data, 5);
 console.log(chunkedGroups);
 
+let complete = [1, 2, 2, 3, 4, 4, 5];
+let withoutTwoFour = without(complete, 2, 4);
+console.log(withoutTwoFour);
+
+let notShuffled = [1, 2, 3, 4, 5, 6, 7, 8];
+let shuffledArr = shuffle(notShuffled);
+console.log(shuffledArr);
+
+let fiveRandomPeople = sampleSize(data, 5)
+console.log(fiveRandomPeople);
 
 if (typeof describe === 'function') {
-  describe('chunk', () => {
+  describe('#chunk', () => {
     it('return an array of arrays the size of the chunk number', () => {
       const array = chunk(data, 5);
       assert.equal(
@@ -830,7 +840,7 @@ if (typeof describe === 'function') {
       );
     });
   });
-  describe('reverse()', () => {
+  describe('#reverse', () => {
     it('should reverse the order of an array', () => {
       const order = [1, 2, 3, 4, 5];
       const reverseOrder = reverse(order);
@@ -840,15 +850,31 @@ if (typeof describe === 'function') {
       assert.equal(reverseOrder[4], 1);
     });
   });
-  describe('without()', () => {
+  describe('#without', () => {
     it('return a new array without excluded values', () => {
-      const complete = [1, 2, 3, 4, 5];
-      const withoutTwoFour = without(complete, 2, 4);
+      const notTwoOrFour = (currentValue) => {
+        return (currentValue !== 2 && currentValue !== 4)
+      }
+      let complete = [1, 2, 2, 3, 4, 4, 5];
+      let withoutTwoFour = without(complete, 2, 4);
       assert.equal(
-        reverseOrder[0], 5
+        withoutTwoFour.length, 3
       );
-      assert.equal(reverseOrder[4], 1);
+      assert(withoutTwoFour.every(notTwoOrFour));
     });
   });
+  describe('#shuffle', ()=> {
+    it('shuffles an array to a random order', ()=> {
+      let notShuffled = [1, 2, 3, 4, 5, 6, 7, 8];
+      let shuffledArr = shuffle(notShuffled);
+      assert.notDeepStrictEqual(notShuffled, shuffledArr);
+    })
+  })
+  describe('#sampleSize', ()=> {
+    it('should return five random people from the data array', ()=> {
+      let fiveRandomPeople = sampleSize(data, 5);
+      let fiveOtherPeople = sampleSize(data, 5);
+      assert.notDeepStrictEqual(fiveRandomPeople, fiveOtherPeople);
+    })
+  })
 }
-
